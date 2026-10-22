@@ -11,6 +11,7 @@ Welcome to Pitaya's documentation!
    :caption: Contents:
 
    overview
+   learning-guide-zh
    features
    communication
    configuration

@@ -20,6 +20,8 @@ It provides a basic development framework for distributed multiplayer games and 
 
 ## Getting Started
 
+[中文学习指南](docs/learning-guide-zh.md)：从运行示例到阅读请求链路、会话和集群源码。
+
 ### Prerequisites
 
 * [Go](https://golang.org/) >= 1.16
