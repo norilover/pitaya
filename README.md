@@ -22,6 +22,8 @@ It provides a basic development framework for distributed multiplayer games and 
 
 [中文学习指南](docs/learning-guide-zh.md)：从运行示例到阅读请求链路、会话和集群源码。
 
+[模块设计详解](docs/module-design-zh.md)：理解各模块的职责、依赖、状态、并发、生命周期和扩展方式。
+
 ### Prerequisites
 
 * [Go](https://golang.org/) >= 1.16

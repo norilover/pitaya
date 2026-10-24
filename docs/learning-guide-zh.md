@@ -4,6 +4,8 @@ Pitaya 是一个用 Go 编写的游戏服务端框架，负责连接管理、消
 
 这份指南面向具备 Go 基础、第一次阅读本项目的开发者，以当前仓库的 v3 实现为准，代码基线为 `main` 的 `f3d0af5`。建议先跑通一个请求，再顺着请求找到相关模块，最后通过小改动验证理解。第一轮学习结束时，你应该能解释：客户端请求如何到达后端、后端如何找到这个玩家，以及响应如何回到客户端。
 
+深入阅读见 [Pitaya 模块设计详解](module-design-zh.md)：逐个说明模块的职责、核心对象、依赖关系、状态归属、并发行为、失败边界与扩展方式，并提供结构图、时序图和源码阅读练习。
+
 ## 1. 先建立项目地图
 
 最先区分两个入口：仓库根目录的 `main.go` 启动的是命令行客户端；游戏服务器示例的入口在 `examples/`，框架实现位于 `pkg/`。
@@ -133,7 +135,9 @@ notify room.room.message {"name":"learner","content":"hello"}
 
 你应观察到：room 能读到前端设置的 `level=1`；room 更新并执行 `PushToFront` 后，前端能读到 `level=2`；加入组后可收到 `onMembers`，发送消息后可收到 `onMessage`。后端 `SetSessionData` 返回的是原始字节 `success`，不是 JSON 对象。`SetData` 设置整份数据，不是仅更新传入的某几个键。
 
-`message` 没有返回值，因此使用 `notify`；它没有与 Request 对应的直接响应，广播 Push 是另一条消息。可以打开第二个 CLI，依次执行连接、`entry`、`join`，观察两个客户端收到广播。
+当前示例的 `Room.Join` 有一个需要注意的实现问题：它先添加成员并发送 Push，随后在后端调用 `Session.OnClose`，这会返回 `ErrOnCloseBackend`，使 Join 请求最终报错。因此这里可能同时看到 `onMembers` 推送和 Join 错误；已经执行的加组操作不会自动撤销，断线移除成员的回调也未注册成功。这个问题的设计背景见 [模块设计详解](module-design-zh.md) 第 6、12 节。
+
+`message` 没有返回值，因此使用 `notify`；它没有与 Request 对应的直接响应，广播 Push 是另一条消息。可以打开第二个 CLI，依次执行连接、`entry`、`join`，在了解上述示例限制的前提下观察广播；不要把 Join 报错当成 etcd 或 gRPC 连接故障。
 
 学习完成后，分别在服务器终端按 Ctrl+C 结束进程。如这些 Compose 容器仅用于本次练习，可运行：
 

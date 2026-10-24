@@ -12,6 +12,7 @@ Welcome to Pitaya's documentation!
 
    overview
    learning-guide-zh
+   module-design-zh
    features
    communication
    configuration
